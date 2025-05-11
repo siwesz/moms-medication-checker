@@ -239,11 +239,30 @@
                 transform: translateX(-200px) rotate(35deg);
             }
         }
+
+        /* Media queries for responsive design */
+        @media (max-width: 768px) {
+            /* Smaller hearts on mobile devices */
+            .floating-heart:nth-child(1) { width: 20px; height: 20px; }
+            .floating-heart:nth-child(2) { width: 10px; height: 10px; }
+            .floating-heart:nth-child(3) { width: 25px; height: 25px; }
+            .floating-heart:nth-child(4) { width: 30px; height: 30px; }
+            .floating-heart:nth-child(5) { width: 15px; height: 15px; }
+            .floating-heart:nth-child(6) { width: 22px; height: 22px; }
+            .floating-heart:nth-child(7) { width: 12px; height: 12px; }
+            .floating-heart:nth-child(8) { width: 28px; height: 28px; }
+            .floating-heart:nth-child(9) { width: 14px; height: 14px; }
+            .floating-heart:nth-child(10) { width: 18px; height: 18px; }
+
+            /* Smaller text on mobile */
+            .greeting { font-size: 2.5rem; }
+            .heart { font-size: 3.5rem; }
+        }
     </style>
 </head>
 <body>
     <!-- Decorative floating hearts in the background -->
-    <div class="hearts">
+    <div class="hearts" id="heartsContainer">
         <div class="floating-heart"></div>
         <div class="floating-heart"></div>
         <div class="floating-heart"></div>
@@ -279,16 +298,26 @@
         const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
         document.getElementById("greeting").textContent = randomGreeting;
         
-        // Add fade-out animation to the container after 4.5 seconds
-        // This creates a smooth transition before redirecting
+        // Add fade-out animation to all elements at the same time
+        // This creates a synchronized transition before redirecting
         setTimeout(() => {
+            // Fade out the splash container
             const container = document.getElementById("splashContainer");
             container.style.animation = "fadeOut 0.5s ease-out forwards";
+            
+            // Fade out the hearts container at the same time
+            const heartsContainer = document.getElementById("heartsContainer");
+            heartsContainer.style.opacity = "0";
+            heartsContainer.style.transition = "opacity 0.5s ease-out";
+            
+            // Fade out the background
+            document.body.style.transition = "background 0.5s ease-out";
+            document.body.style.background = "white";
         }, 4500);
         
         // Redirect to the main application page after 5 seconds
         setTimeout(() => {
-            window.location.href = "/app";  // Changed from "app.html" to "/app"
+            window.location.href = "/app";
         }, 5000);
     </script>
 </body>
