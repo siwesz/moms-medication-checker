@@ -5,7 +5,7 @@
  * It sets up an Express server, serves static files, and provides API endpoints
  * for checking medication safety and getting AI assistant responses.
  *
- * @author Your Name
+ * @author Siphumelelisiwe Gcwabaza
  * @version 1.0.0
  */
 
@@ -188,10 +188,32 @@ app.post("/ask-ai", (req, res) => {
 })
 
 /**
- * Start the server and listen for incoming requests
- * The server will listen on the specified port (default: 3000)
+ * Route handler for the /app path
+ * Serves the app.html file when /app is accessed
  */
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`)
-  console.log(`Open http://localhost:${port} in your browser to see the splash page`)
+app.get("/app", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "app.html"))
 })
+
+/**
+ * Route handler for the root path (/)
+ * Serves the index.html file (splash page) when the root URL is accessed
+ */
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"))
+})
+
+// For Vercel serverless functions
+if (process.env.VERCEL) {
+  // Export the Express app as a serverless function
+  module.exports = app
+} else {
+  /**
+   * Start the server and listen for incoming requests
+   * The server will listen on the specified port (default: 3000)
+   */
+  app.listen(port, () => {
+    console.log(`Server running on port ${port}`)
+    console.log(`Open http://localhost:${port} in your browser to see the splash page`)
+  })
+}
