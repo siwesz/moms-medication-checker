@@ -830,3 +830,5 @@ document.getElementById("medicationForm").addEventListener("submit", async (e) =
     results.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 })
+/ /   T r i g g e r   d e p l o y m e n t  
+ 
