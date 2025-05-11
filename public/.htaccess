@@ -1,0 +1,11 @@
+# Mom's Medication Checker - Server Configuration
+#
+# This .htaccess file ensures that index.html is the default file
+# that gets served when a user visits the root URL.
+# This allows the splash page to be displayed first.
+#
+# @author Your Name
+# @version 1.0.0
+
+# Ensure index.html is the default file
+DirectoryIndex index.html

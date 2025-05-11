@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+  Mom's Medication Checker - Main Application
+  
+  This is the main application page for the Mom's Medication Checker.
+  It provides a user interface for checking if medications are safe
+  for specific health conditions, particularly for someone with a
+  heart condition requiring a pacemaker and who is taking warfarin.
+  
+  The page includes:
+  - A health profile section
+  - A medication search form with autocomplete
+  - Search history tracking
+  - Common medications quick access
+  - Detailed medication safety results
+  
+  @author Your Name
+  @version 1.0.0
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mom's Medication Checker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header section with application title -->
+    <header>
+        <div class="container">
+            <h1>Mom's Medication Checker</h1>
+            <div class="subtitle">Check if medications are safe for your specific health conditions</div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- Health profile section displaying user's health conditions -->
+        <div class="health-info">
+            <h3>Your Health Profile:</h3>
+            <ul>
+                <li>Heart condition requiring a pacemaker</li>
+                <li>Currently taking warfarin (blood thinner)</li>
+            </ul>
+        </div>
+        
+        <!-- Medication search form with autocomplete -->
+        <div class="search-container">
+            <form class="search-form" id="medicationForm">
+                <label for="medicationName">Enter Medication Name:</label>
+                <div class="search-input-wrapper">
+                    <input type="text" id="medicationName" placeholder="Example: Adco-Bisocor, Panado, Disprin CV, etc." required>
+                    <div class="search-suggestions" id="searchSuggestions"></div>
+                </div>
+                <button type="submit">Check Medication</button>
+            </form>
+            <div class="error-message" id="errorMessage"></div>
+            
+            <!-- Search history section -->
+            <div class="search-history" id="searchHistory">
+                <div class="search-history-title">Recent searches:</div>
+                <div class="history-pills" id="historyPills"></div>
+            </div>
+            
+            <!-- Common medications quick access -->
+            <div class="common-meds">
+                <h3>Common Medications:</h3>
+                <div class="common-meds-list" id="commonMedsList"></div>
+            </div>
+        </div>
+        
+        <!-- Loading indicator -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Checking medication safety...</p>
+        </div>
+        
+        <!-- Results section (hidden until search is performed) -->
+        <div class="results" id="results">
+            <div class="results-header">
+                <h2>Results for: <span id="medicationTitle"></span></h2>
+            </div>
+            <div id="resultContent"></div>
+            <div class="data-source" id="dataSource"></div>
+        </div>
+    </div>
+    
+    <!-- Footer section -->
+    <footer>
+        <div class="container">
+            <p>This website is designed specifically for Mom's medication needs. Always consult with your doctor before taking any medication.</p>
+        </div>
+    </footer>
+
+    <!-- Load the main script -->
+    <script src="script.js"></script>
+</body>
+</html>
