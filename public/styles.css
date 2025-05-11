@@ -166,6 +166,32 @@ h1 {
   vertical-align: middle;
 }
 
+/* Safety reasons explanation */
+.safety-reasons {
+  background-color: #fff0f0;
+  padding: 15px;
+  border-radius: 5px;
+  margin: 10px 0 15px 0;
+  font-size: 16px;
+  border-left: 4px solid #cc0000;
+}
+
+.safety-reasons h4 {
+  margin: 0 0 10px 0;
+  color: #cc0000;
+  font-size: 18px;
+}
+
+.safety-reasons ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.safety-reasons li {
+  margin-bottom: 5px;
+  line-height: 1.4;
+}
+
 .warning {
   color: #ff6600; /* Bright orange */
   font-weight: bold;

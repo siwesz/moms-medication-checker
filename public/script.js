@@ -4,7 +4,7 @@
  * This file contains all the client-side functionality for the medication checker application.
  * It handles search suggestions, medication checking, history tracking, and UI interactions.
  *
- * @author Your Name
+ * @author Siphumelelisiwe Gcwabaza
  * @version 1.0.0
  */
 
@@ -424,7 +424,7 @@ function renderMarkdown(text) {
   text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
 
   // Replace *text* with <em>text</em>
-  text = text.replace(/\*(.*?)\*/g, "<em>$1</em>")
+  text = text.replace(/\*(.*?)\*/g, "<em>text</em>")
 
   // Replace - list items with <li> elements
   text = text.replace(/^- (.*?)$/gm, "<li>$1</li>")
@@ -655,6 +655,80 @@ document.getElementById("medicationForm").addEventListener("submit", async (e) =
 
       resultContent.appendChild(safetyIndicator)
 
+      // Add explanation section for why medication is unsafe
+      if (!isSafeOverall) {
+        const reasonsDiv = document.createElement("div")
+        reasonsDiv.className = "safety-reasons"
+        reasonsDiv.style.backgroundColor = "#fff0f0"
+        reasonsDiv.style.padding = "15px"
+        reasonsDiv.style.borderRadius = "5px"
+        reasonsDiv.style.marginTop = "10px"
+        reasonsDiv.style.marginBottom = "15px"
+        reasonsDiv.style.fontSize = "16px"
+
+        const reasonsTitle = document.createElement("h4")
+        reasonsTitle.textContent = "Why this medication is not safe:"
+        reasonsTitle.style.margin = "0 0 10px 0"
+        reasonsTitle.style.color = "#cc0000"
+        reasonsDiv.appendChild(reasonsTitle)
+
+        const reasonsList = document.createElement("ul")
+        reasonsList.style.margin = "0"
+        reasonsList.style.paddingLeft = "20px"
+
+        // Add specific reasons based on the medication's issues
+        if (data.heartIssue) {
+          const heartItem = document.createElement("li")
+          heartItem.textContent = "This medication may affect your heart condition"
+          reasonsList.appendChild(heartItem)
+        }
+
+        if (data.pacemakerIssue) {
+          const pacemakerItem = document.createElement("li")
+          pacemakerItem.textContent = "This medication may interfere with your pacemaker"
+          reasonsList.appendChild(pacemakerItem)
+        }
+
+        if (data.warfarinIssue) {
+          const warfarinItem = document.createElement("li")
+          warfarinItem.textContent = "This medication may interact with your blood thinner (warfarin)"
+          reasonsList.appendChild(warfarinItem)
+        }
+
+        reasonsDiv.appendChild(reasonsList)
+        resultContent.appendChild(reasonsDiv)
+      }
+
+      // Add warfarin-specific information with enhanced visibility - MOVED HERE
+      const warfarinDiv = document.createElement("div")
+      if (data.warfarinIssue === true) {
+        // Known interaction with warfarin
+        warfarinDiv.className = "warfarin-warning"
+        warfarinDiv.innerHTML = `
+                    <h4>⚠️ Warning: May Affect Blood Thinner</h4>
+                    <p>This medicine may not mix well with warfarin (your blood thinner).</p>
+                    <p>It could change how your blood thinner works or cause more bleeding.</p>
+                    <p>Ask your doctor before taking this medicine.</p>
+                `
+      } else if (data.warfarinIssue === false) {
+        // Known to be safe with warfarin
+        warfarinDiv.className = "warfarin-safe"
+        warfarinDiv.innerHTML = `
+                    <h4>✓ Safe With Blood Thinner</h4>
+                    <p>This medicine should not affect your warfarin (blood thinner).</p>
+                    <p>Still, tell your doctor about all medicines you take.</p>
+                `
+      } else {
+        // Unknown or not specified
+        warfarinDiv.className = "warfarin-unknown"
+        warfarinDiv.innerHTML = `
+                    <h4>⚠️ Not Sure About Blood Thinner</h4>
+                    <p>We don't know if this medicine affects warfarin (your blood thinner).</p>
+                    <p>To be safe, ask your doctor before taking this medicine.</p>
+                `
+      }
+      resultContent.appendChild(warfarinDiv)
+
       // Display specific warnings in a more visible format
       if (data.warnings && data.warnings.length > 0) {
         const warningsDiv = document.createElement("div")
@@ -690,36 +764,6 @@ document.getElementById("medicationForm").addEventListener("submit", async (e) =
 
         resultContent.appendChild(infoDiv)
       }
-
-      // Add warfarin-specific information with enhanced visibility
-      const warfarinDiv = document.createElement("div")
-      if (data.warfarinIssue === true) {
-        // Known interaction with warfarin
-        warfarinDiv.className = "warfarin-warning"
-        warfarinDiv.innerHTML = `
-                    <h4>⚠️ Warning: May Affect Blood Thinner</h4>
-                    <p>This medicine may not mix well with warfarin (your blood thinner).</p>
-                    <p>It could change how your blood thinner works or cause more bleeding.</p>
-                    <p>Ask your doctor before taking this medicine.</p>
-                `
-      } else if (data.warfarinIssue === false) {
-        // Known to be safe with warfarin
-        warfarinDiv.className = "warfarin-safe"
-        warfarinDiv.innerHTML = `
-                    <h4>✓ Safe With Blood Thinner</h4>
-                    <p>This medicine should not affect your warfarin (blood thinner).</p>
-                    <p>Still, tell your doctor about all medicines you take.</p>
-                `
-      } else {
-        // Unknown or not specified
-        warfarinDiv.className = "warfarin-unknown"
-        warfarinDiv.innerHTML = `
-                    <h4>⚠️ Not Sure About Blood Thinner</h4>
-                    <p>We don't know if this medicine affects warfarin (your blood thinner).</p>
-                    <p>To be safe, ask your doctor before taking this medicine.</p>
-                `
-      }
-      resultContent.appendChild(warfarinDiv)
 
       // Always add disclaimer
       const disclaimerP = document.createElement("div")
