@@ -21,6 +21,9 @@ app.use(express.json())
 // This makes all files in the public directory accessible via HTTP
 app.use(express.static(path.join(__dirname, "public")))
 
+// Import the FDA API functions
+const { searchFDADatabase, searchFDADatabaseAlternative, extractSafetyInfo } = require("./fda-api")
+
 /**
  * Import the South African medications database
  * This database contains information about medications available in South Africa,
@@ -40,12 +43,13 @@ try {
  *
  * This endpoint takes a medication name and returns safety information
  * based on specific health conditions (heart condition, pacemaker, warfarin use).
+ * It checks multiple databases including the FDA API.
  *
  * @route GET /check-medication
  * @param {string} name - The name of the medication to check
  * @returns {Object} Medication safety information
  */
-app.get("/check-medication", (req, res) => {
+app.get("/check-medication", async (req, res) => {
   // Get the medication name from the query parameters and convert to lowercase for case-insensitive matching
   const medicationName = req.query.name.toLowerCase()
 
@@ -135,7 +139,49 @@ app.get("/check-medication", (req, res) => {
 
   if (medication) {
     return res.json(medication)
-  } else {
+  }
+
+  // If not found in our local databases, try the FDA API
+  try {
+    console.log(`Searching FDA API for: ${medicationName}`)
+
+    // Search the FDA database
+    let fdaData = await searchFDADatabase(medicationName)
+
+    // If not found, try alternative search method
+    if (!fdaData) {
+      console.log(`No results from primary FDA search, trying alternative search for: ${medicationName}`)
+      fdaData = await searchFDADatabaseAlternative(medicationName)
+    }
+
+    if (fdaData) {
+      // Extract safety information from the FDA data
+      const safetyInfo = extractSafetyInfo(fdaData)
+
+      if (safetyInfo) {
+        console.log(`Found FDA data for: ${medicationName}`)
+
+        // Format the response to match our expected format
+        const response = {
+          name: safetyInfo.brandName || medicationName,
+          found: true,
+          isSafe: !safetyInfo.heartIssue && !safetyInfo.pacemakerIssue && !safetyInfo.warfarinIssue,
+          warfarinIssue: safetyInfo.warfarinIssue,
+          heartIssue: safetyInfo.heartIssue,
+          pacemakerIssue: safetyInfo.pacemakerIssue,
+          medicationNames: {
+            brand: safetyInfo.brandName || "Not available",
+            generic: safetyInfo.genericName || "Not available",
+          },
+          generalInfo: safetyInfo.description || safetyInfo.generalInfo || "No detailed information available.",
+          warnings: safetyInfo.warnings,
+          dataSource: "FDA Medication Database",
+        }
+
+        return res.json(response)
+      }
+    }
+
     // If medication is not found, provide suggestions for similar medications
     // This helps users who might have misspelled the medication name
     const suggestions = []
@@ -161,6 +207,14 @@ app.get("/check-medication", (req, res) => {
       found: false,
       message: "Sorry, we couldn't find information about this medication.",
       suggestions: uniqueSuggestions.length > 0 ? uniqueSuggestions : undefined,
+    })
+  } catch (error) {
+    console.error("Error searching medication:", error)
+
+    return res.json({
+      found: false,
+      message: "Sorry, we couldn't find information about this medication.",
+      error: "Error connecting to medication database",
     })
   }
 })
